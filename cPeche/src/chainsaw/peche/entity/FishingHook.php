@@ -5,12 +5,13 @@ namespace chainsaw\peche\entity;
 
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntitySizeInfo;
+use pocketmine\entity\Location;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
 use pocketmine\player\Player;
 use pocketmine\block\Water;
-use pocketmine\block\VanillaBlocks;
 
 class FishingHook extends Entity {
     private ?Player $owner = null;
@@ -32,9 +33,17 @@ class FishingHook extends Entity {
         return 0.04;
     }
 
+    public function __construct(Location $location, ?CompoundTag $nbt = null, ?Player $owner = null) {
+        parent::__construct($location, $nbt);
+        if ($owner !== null) {
+            $this->setOwner($owner);
+        }
+        $this->setNoClientPredictions();
+    }
+
     public function setOwner(?Player $owner): void {
         $this->owner = $owner;
-        if($owner !== null){
+        if ($owner !== null) {
             $this->getNetworkProperties()->setLong(EntityMetadataProperties::OWNER_EID, $owner->getId());
         }
     }
@@ -47,31 +56,31 @@ class FishingHook extends Entity {
         $hasUpdate = parent::entityBaseTick($tickDiff);
         if ($this->isFlaggedForDespawn()) return $hasUpdate;
 
-        $block = $this->getWorld()->getBlock($this->getPosition());
-        $blockAbove = $this->getWorld()->getBlock($this->getPosition()->add(0, 1, 0));
+        $pos = $this->getPosition();
+        $block = $this->getWorld()->getBlock($pos);
+        $blockAbove = $this->getWorld()->getBlock($pos->add(0, 1, 0));
 
         if ($block instanceof Water || $blockAbove instanceof Water) {
-            if (!$this->inWater) {
-                $this->inWater = true;
-            }
-
-            $waterLevel = $this->getWorld()->getBlock($this->getPosition())->getPosition()->y + 1;
-            $hookY = $this->getPosition()->y;
-
-            if ($hookY < $waterLevel) {
-                $this->motion->y = 0.1;
+            $this->inWater = true;
+            $waterSurfaceY = floor($pos->y) + 0.9; 
+            if ($pos->y < $waterSurfaceY) {
+                $this->motion->y = 0.05;
             } else {
-                $this->motion->y = 0.0;
+                $this->motion->y = 0;
             }
-
-            $this->motion->x *= 0.95;
-            $this->motion->z *= 0.95;
+            $this->motion->x *= 0.9;
+            $this->motion->z *= 0.9;
             $hasUpdate = true;
         } else {
             $this->inWater = false;
+            if (!$block->isTransparent() && !$block instanceof Water) {
+                $this->motion->x = 0;
+                $this->motion->y = 0;
+                $this->motion->z = 0;
+            }
         }
 
-        if($this->owner !== null && ($this->owner->isClosed() || $this->getPosition()->distance($this->owner->getPosition()) > 32)){
+        if ($this->owner !== null && ($this->owner->isClosed() || $pos->distance($this->owner->getPosition()) > 32)) {
             $this->flagForDespawn();
         }
 
