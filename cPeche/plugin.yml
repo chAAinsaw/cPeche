@@ -2,4 +2,6 @@ main: chainsaw\peche\Main
 name: cPeche
 version: 1.0.0
 api: 5.0.0
+
 author: chainsaw
+website: https://discord.gg/VtBzr3pwrZ
