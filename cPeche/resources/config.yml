@@ -1,0 +1,63 @@
+fishing:
+  time:
+    min: 1
+    max: 2
+  
+  popup:
+    rarities:
+      common:
+        color: "§f"
+        speed: 0.5
+        target_count: 3
+        total_squares: 10
+      rare:
+        color: "§e"
+        speed: 0.3
+        target_count: 2
+        total_squares: 8
+      epic:
+        color: "§d"
+        speed: 0.2
+        target_count: 1
+        total_squares: 6
+      legendary:
+        color: "§6"
+        speed: 0.1
+        target_count: 1
+        total_squares: 5
+
+  loots:
+    common:
+      chance: 70
+      items:
+        - item: "minecraft:emerald"
+          amount: 2
+        - item: "minecraft:emerald"
+          amount: 1
+    rare:
+      chance: 20
+      items:
+        - item: "minecraft:emerald"
+          amount: 2
+        - item: "minecraft:emerald"
+          amount: 3
+    epic:
+      chance: 8
+      items:
+        - item: "minecraft:emerald"
+          amount: 5
+    legendary:
+      chance: 2
+      items:
+        - item: "minecraft:emerald"
+          amount: 2
+
+messages:
+  line_cast: "[cPeche]ligne lancé"
+  waiting: "[cPeche]ligne qui a atteind l'eau"
+  bite: "[cPeche]poisson qui a mordue"
+  success: "[cPeche]item recup:{item}"
+  failed: "[cPeche]raté(pendant le popup)"
+  cancelled: "[cPeche]raté (pendant que tu cherche le poisson)"
+  retrieve: "[cPeche]quitté le mode peche"
+  not_in_water: "[cPeche] la ligne n'est pas dans l'eau"
